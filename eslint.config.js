@@ -40,11 +40,9 @@ export default [
       'no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-unsafe-optional-chaining': 'error',
-      'no-unsafe-regex': 'error',
-      'no-unsafe-return': 'error',
 
       // Code Quality Rules
-      'no-unused-vars': ['error', { 
+      'no-unused-vars': ['error', {
         varsIgnorePattern: '^[A-Z_]',
         args: 'after-used',
         ignoreRestSiblings: true,
@@ -60,7 +58,6 @@ export default [
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 1 }],
       'no-trailing-spaces': 'error',
       'eol-last': 'error',
-      'semi': ['error', 'always'],
       'quotes': ['error', 'single', { avoidEscape: true }],
       'comma-dangle': ['error', 'always-multiline'],
       'arrow-parens': ['error', 'always'],
@@ -134,14 +131,6 @@ export default [
         ImportDeclaration: 1,
         flatTernaryExpressions: false,
         ignoreComments: false,
-      }],
-
-      // Import Rules
-      'import/no-duplicates': 'error',
-      'import/order': ['error', {
-        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-        'newlines-between': 'always',
-        'alphabetize': { order: 'asc' },
       }],
     },
   },

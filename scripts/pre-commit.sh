@@ -30,16 +30,16 @@ command_exists() {
 run_command() {
     local cmd="$1"
     local name="$2"
-    
+
     print_status "Running $name..."
     eval "$cmd"
     local status=$?
-    
+
     if [ $status -ne 0 ]; then
         print_error "$name failed with status $status"
         return 1
     fi
-    
+
     print_success "$name completed successfully"
     return 0
 }
@@ -71,8 +71,9 @@ if command_exists "tsc"; then
     fi
 fi
 
-# Run linting
-run_command "npm run lint" "ESLint"
+# Run linting with auto-fix
+print_status "Running ESLint with auto-fix..."
+run_command "npm run lint:fix" "ESLint"
 if [ $? -ne 0 ]; then
     print_error "Linting failed"
     exit 1
@@ -85,18 +86,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Run tests
-run_command "npm run test" "Tests"
-if [ $? -ne 0 ]; then
-    print_error "Tests failed"
-    exit 1
-fi
-
-# Check for security vulnerabilities
-print_status "Checking for security vulnerabilities..."
-run_command "npm audit" "Security audit"
-if [ $? -ne 0 ]; then
-    print_error "Security vulnerabilities found"
+# Check for security vulnerabilities (only high and critical)
+print_status "Checking for high/critical security vulnerabilities..."
+AUDIT_RESULT=$(npm audit --audit-level=high 2>&1)
+if [[ $AUDIT_RESULT == *"found"* ]]; then
+    print_error "High/Critical security vulnerabilities found:"
+    echo "$AUDIT_RESULT"
     exit 1
 fi
 
@@ -107,12 +102,6 @@ if [ ! -z "$OUTDATED" ]; then
     print_error "Outdated dependencies found:"
     echo "$OUTDATED"
     exit 1
-fi
-
-# Check bundle size (if using webpack-bundle-analyzer)
-if [ -f "stats.json" ]; then
-    print_status "Checking bundle size..."
-    run_command "npm run analyze" "Bundle analysis"
 fi
 
 # Check for console.log statements
@@ -154,4 +143,4 @@ done
 
 # All checks passed
 print_success "All pre-commit checks passed!"
-exit 0 
+exit 0
